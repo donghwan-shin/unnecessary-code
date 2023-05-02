@@ -36,9 +36,9 @@ This part is about dead code detection using IntelliJ.
 
 ### (Task1) Dead code detection using IntelliJ
 
-Right-click the folder "deadcode" in the project view, and select "Analyze | Inspect Code...". You should see the following window:
+Right-click the folder "example.project" in the project view, and select "Analyze | Inspect Code...". You should see the following window:
 
-![code-inspection-window](resources/analyse.png)
+![code-inspection-window](resources/analyse.jpg)
 
 Click "Analyze" and wait for the inspection to finish. You should see the following window:
 
@@ -46,29 +46,39 @@ Click "Analyze" and wait for the inspection to finish. You should see the follow
 
 Take a look at the results, one by one. See if they are really dead code. 
 
-In the "deadcode" folder, you should be able to see:
+In the "example.project" folder, you should be able to see:
 - dead code in the granularity of statements (variables)
 - dead code in the granularity of methods
 - dead code in the granularity of imports
 
 ### (Task2) Identify feature-specific code using Software Reconnaissance
 
-In [Client.java](src/main/java/example/project/deadcode/Client.java), we have two client features implemented as `feature1()` and `feature2()`.
+In [Client.java](src/main/java/example/project/Client.java), we have two client features implemented as `feature1()` and `feature2()`.
 Let's assume that the second feature is no longer used by any users for a long time, i.e., the code related to the second feature is unused code.
 
-Although it looks clear what classes/methods are only relevant to `feature2()` but not `feature1()` in this example due to the short methods, it might be difficult to identify such code in a large-scale project.
+Now, let's use dynamic analysis, specifically *software reconnaissance*, to identify the unused code (i.e., the code only required for `feature2()`) in the project.
+If you don't know how to do it, please see the instructions below.
 
-So, let's use dynamic analysis to identify such unused classes/methods. Specifically, please use software reconnaissance to identify the unused classes/methods in the following steps:
+(Known issue: `-Djava.unit.logging.config.file=[LOGGING-PROPERTIES-FILE]` is not working properly, so the execution traces might simply be printed on the console instead of the file. Possibly a Java version or other library version issue. If you encounter this issue, please ignore it and just use the traces printed on the console.)
 
-1. Make a wrapper main method that calls `feature1()` in [Client.java](src/main/java/example/project/deadcode/Client.java).
-2. Collect an execution trace of the wrapper main method using software reconnaissance (feel free to use the reengineering toolkit provided in Week 4 Lab or Assignment 1).
+1. Make a wrapper main method that calls `feature1()` in [Client.java](src/main/java/example/project/Client.java).
+2. Collect an execution trace of the wrapper main using the reengineering toolkit jar. To attach the jar as a java agent, you need to add the following VM options in the Run configuration of the main in IntelliJ (see Week 4 - Lab materials - Tutorial 1: Generating Traces of a Java program for more details):
+```
+-javaagent:[REENGINEERING_TOOLKIT_FAT_JAR]=exemples.project -Djava.unit.logging.config.file=[LOGGING-PROPERTIES-FILE]
+```
 3. Repeat steps 1-2 for `feature2()`.
-4. Compare the execution traces of the two features and identify the classes/methods only required for `feature2()`; they are the unused classes/methods we can remove without affecting the rest of the system.
+4. Compare the execution traces of the two features and identify the methods required for `feature2()` but not for `feature1()`; they are the unused methods we can remove without affecting the rest of the system.
+
+
 
 ### (Task3) Understand the unused code in the project using call graphs
 
-In the previous task, you identified the unused code that can be removed without affecting the rest of the system.
-To make sure if this is correct, let's use static analysis to understand how the unused code is used in the project.
-Feel free to use the reengineering toolkit provided in Week 3 Lab or Assignment 1.
+In Task 2, you identified the unused code that can be removed without affecting the rest of the system.
+To double-check if this is correct, let's use static analysis to understand how the unused code is used in the project.
+Feel free to use `CallGraphGenerator` in the reengineering toolkit (provided in Week 3 Lab or Assignment 1).
 
-How does the call graph look like? Is the unused code can be safely removed? Can you discuss your answer based on the call graph?
+Briefly speaking, you need to:
+1. Build a jar file of this project.
+2. Run the `CallGraphGenerator` with the VM options specifying the above jar file and the program arguments specifying the absolute path to the compiled classes of this project (i.e., `.../target/classes`).
+
+How does the call graph look like? Is the unused code identified from Task 2 can be safely removed? Can you discuss your answer based on the call graph?

@@ -1,4 +1,4 @@
-package example.project.deadcode;
+package example.project;
 
 public class Account {
 

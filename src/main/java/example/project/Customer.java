@@ -1,4 +1,4 @@
-package example.project.deadcode;
+package example.project;
 
 public class Customer {
     String name;

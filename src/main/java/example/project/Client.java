@@ -1,4 +1,4 @@
-package example.project.deadcode;
+package example.project;
 
 public class Client {
 
@@ -45,6 +45,11 @@ public class Client {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        feature1();
+        feature2();
     }
 
 }
