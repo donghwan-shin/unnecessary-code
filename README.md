@@ -62,7 +62,7 @@ If you don't know how to do it, please see the instructions below.
 1. Make a wrapper main method that calls `feature1()` in [Client.java](src/main/java/example/project/Client.java).
 2. Collect an execution trace of the wrapper main using the reengineering toolkit jar. To attach the jar as a java agent, you need to add the following VM options in the Run configuration of the main in IntelliJ (see Week 4 - Lab materials - Tutorial 1: Generating Traces of a Java program for more details):
 ```
--javaagent:[REENGINEERING_TOOLKIT_FAT_JAR]=exemples.project -Djava.util.logging.config.file=[LOGGING-PROPERTIES-FILE]
+-javaagent:[REENGINEERING_TOOLKIT_FAT_JAR]=example.project -Djava.util.logging.config.file=[LOGGING-PROPERTIES-FILE]
 ```
 3. Repeat steps 1-2 for `feature2()`.
 4. Compare the execution traces of the two features and identify the methods required for `feature2()` but not for `feature1()`; they are the unused methods we can remove without affecting the rest of the system.
